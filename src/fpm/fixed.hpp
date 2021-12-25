@@ -189,7 +189,6 @@ private:
 //
 // Convenience typedefs
 //
-
 using fixed_16_16 = fixed<std::int32_t, std::int64_t, 16>;
 using fixed_24_8 = fixed<std::int32_t, std::int64_t, 8>;
 using fixed_8_24 = fixed<std::int32_t, std::int64_t, 24>;

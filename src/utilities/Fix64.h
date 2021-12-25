@@ -4,10 +4,15 @@
 #include <memory>
 #include <vector>
 
-#define R128_IMPLEMENTATION
-#include "../r128/r128.h"
+#include "../fpm/fixed.hpp"
+#include "../fpm/ios.hpp"
+#include "../fpm/math.hpp"
 
 using namespace std;
+using namespace fpm;
+
+#define Fix64_S64 long long
+#define Fix64_U64 unsigned long long
 
 /**
 * Wrapper for R128 struct
@@ -16,18 +21,18 @@ using namespace std;
 class Fix64
 {
 public:
-	R128 raw;
+	fixed_16_16 raw;
 
 public:
 	Fix64();
 	Fix64(double);
 	Fix64(int);
-	Fix64(R128_S64);
-	Fix64(R128_U64 low, R128_U64 high);
-	Fix64(const R128 &v);
+	Fix64(Fix64_S64);
+	//Fix64(Fix64_U64 low, Fix64_U64 high);
+	Fix64(const fixed_16_16 &v);
 
 	operator double() const;
-	operator R128_S64() const;
+	operator Fix64_S64() const;
 	operator int() const;
 	operator bool() const;
 	operator string() const;
@@ -62,30 +67,30 @@ public:
 
 Fix64::Fix64()
 {
-	raw = R128();
+	raw = fixed_16_16();
 }
 
 Fix64::Fix64(double v)
 {
-	raw = R128(v);
+	raw = fixed_16_16(v);
 }
 
 Fix64::Fix64(int v)
 {
-	raw = R128(v);
+	raw = fixed_16_16(v);
 }
 
-Fix64::Fix64(R128_S64 v)
+Fix64::Fix64(Fix64_S64 v)
 {
-	raw = R128(v);
+	raw = fixed_16_16(v);
 }
 
-Fix64::Fix64(R128_U64 low, R128_U64 high)
-{
-	raw = R128(low, high);
-}
+//Fix64::Fix64(Fix64_U64 low, Fix64_U64 high)
+//{
+//	raw = fixed_16_16(low, high);
+//}
 
-Fix64::Fix64(const R128 &v)
+Fix64::Fix64(const fixed_16_16 &v)
 {
 	raw = v;
 }
@@ -95,9 +100,9 @@ Fix64::operator double() const
 	return (double) raw;
 }
 
-Fix64::operator R128_S64() const
+Fix64::operator Fix64_S64() const
 {
-	return (R128_S64) raw;
+	return (Fix64_S64) raw;
 }
 
 Fix64::operator int() const
@@ -118,25 +123,25 @@ Fix64::operator string() const
 
 Fix64 Fix64::operator+(const Fix64 &rhs) const
 {
-	R128 temp = raw + rhs.raw;
+	fixed_16_16 temp = raw + rhs.raw;
 	return Fix64(temp);
 }
 
 Fix64 Fix64::operator-(const Fix64 &rhs) const 
 {
-	R128 temp = raw - rhs.raw;
+	fixed_16_16 temp = raw - rhs.raw;
 	return Fix64(temp);
 }
 
 Fix64 Fix64::operator/(const Fix64 &rhs) const
 {
-	R128 temp = raw / rhs.raw;
+	fixed_16_16 temp = raw / rhs.raw;
 	return Fix64(temp);
 }
 
 Fix64 Fix64::operator*(const Fix64 &rhs) const
 {
-	R128 temp = raw * rhs.raw;
+	fixed_16_16 temp = raw * rhs.raw;
 	return Fix64(temp);
 }
 
@@ -168,7 +173,5 @@ Fix64 &Fix64::operator+=(const Fix64 &rhs)
 
 Fix64 &Fix64::Sqrt(const Fix64 &rhs)
 {
-	Fix64 dest;
-	r128Sqrt(&dest.raw, &rhs.raw);
-	return dest;
+	return Fix64(fpm::sqrt(rhs.raw));
 }
