@@ -10,6 +10,7 @@ add_executable(
     bepuphysics2_tests
     Fix64Tests.cpp
     Vector2Tests.cpp
+    Vector3Tests.cpp
 )
 
 target_link_libraries(

@@ -8,7 +8,7 @@ namespace BEPUutilities
     /// <summary>
     /// Provides XNA-like 2D vector math.
     /// </summary>
-    struct Vector2
+    class Vector2
     {
         /// <summary>
         /// X component of the vector.
