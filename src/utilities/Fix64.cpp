@@ -182,12 +182,6 @@ Fix64 &Fix64::operator>>=(int amount)
 	return *this;
 }
 
-Fix64 &Fix64::operator+=(const Fix64 &rhs)
-{
-	raw += rhs.raw;
-	return *this;
-}
-
 Fix64 &Fix64::Sqrt(const Fix64 &rhs)
 {
 	Fix64 dest;
