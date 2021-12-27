@@ -1,6 +1,7 @@
 add_library(
     bepuphysics2
     STATIC
+    r128/r128.cpp
     utilities/Fix64.cpp
     utilities/Vector2.cpp
 )

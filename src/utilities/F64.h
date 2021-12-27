@@ -1,8 +1,9 @@
-﻿#include "common.h"
+﻿#pragma once
+
+#include "common.h"
 
 namespace BEPUutilities
 {
-#pragma warning disable F64_NUM, CS1591
 	static class F64
 	{
 	public:
