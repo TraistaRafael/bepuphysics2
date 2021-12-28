@@ -1,380 +1,422 @@
-﻿#pragma once
-
+﻿#include "Quaternion.h"
+#include "Matrix3x3.h"
 #include "Vector3.h"
-#include "Vector2.h"
-#include "Fix64.h"
-#include "F64.h"
 
 namespace BepuUtilities
 {
-	Vector3::Vector3()
+	Quaternion::Quaternion()
 	{
 		this->X = F64::C0;
 		this->Y = F64::C0;
 		this->Z = F64::C0;
+		this->W = F64::C0;
 	}
 
-	Vector3::Vector3(Fix64 x, Fix64 y, Fix64 z)
+	Quaternion::Quaternion(Fix64 x, Fix64 y, Fix64 z, Fix64 w)
 	{
 		this->X = x;
 		this->Y = y;
 		this->Z = z;
+		this->W = w;
 	}
 
-	Vector3::Vector3(Vector2 xy, Fix64 z)
+	void Quaternion::Add(const Quaternion &a, const Quaternion &b, Quaternion &result)
 	{
-		this->X = xy.X;
-		this->Y = xy.Y;
-		this->Z = z;
+		result.X = a.X + b.X;
+		result.Y = a.Y + b.Y;
+		result.Z = a.Z + b.Z;
+		result.W = a.W + b.W;
 	}
 
-	Vector3::Vector3(Fix64 x, Vector2 yz)
+	void Quaternion::Multiply(const Quaternion &a, const Quaternion &b, Quaternion &result)
 	{
-		this->X = x;
-		this->Y = yz.X;
-		this->Z = yz.Y;
+		Fix64 x = a.X;
+		Fix64 y = a.Y;
+		Fix64 z = a.Z;
+		Fix64 w = a.W;
+		Fix64 bX = b.X;
+		Fix64 bY = b.Y;
+		Fix64 bZ = b.Z;
+		Fix64 bW = b.W;
+		result.X = x * bW + bX * w + y * bZ - z * bY;
+		result.Y = y * bW + bY * w + z * bX - x * bZ;
+		result.Z = z * bW + bZ * w + x * bY - y * bX;
+		result.W = w * bW - x * bX - y * bY - z * bZ;
 	}
 
-	Fix64 Vector3::LengthSquared()
+	void Quaternion::Multiply(const Quaternion &q, Fix64 scale, Quaternion &result)
 	{
-		return X * X + Y * Y + Z * Z;
+		result.X = q.X * scale;
+		result.Y = q.Y * scale;
+		result.Z = q.Z * scale;
+		result.W = q.W * scale;
 	}
 
-	Fix64 Vector3::Length()
+	void Quaternion::Concatenate(const Quaternion &a, const Quaternion &b, Quaternion &result)
 	{
-		return Fix64::Sqrt(X * X + Y * Y + Z * Z);
+		Fix64 aX = a.X;
+		Fix64 aY = a.Y;
+		Fix64 aZ = a.Z;
+		Fix64 aW = a.W;
+		Fix64 bX = b.X;
+		Fix64 bY = b.Y;
+		Fix64 bZ = b.Z;
+		Fix64 bW = b.W;
+
+		result.X = aW * bX + aX * bW + aZ * bY - aY * bZ;
+		result.Y = aW * bY + aY * bW + aX * bZ - aZ * bX;
+		result.Z = aW * bZ + aZ * bW + aY * bX - aX * bY;
+		result.W = aW * bW - aX * bX - aY * bY - aZ * bZ;
 	}
 
-	void Vector3::Normalize()
+	Quaternion Quaternion::Concatenate(Quaternion a, Quaternion b)
 	{
-		Fix64 inverse = F64::C1 / Fix64::Sqrt(X * X + Y * Y + Z * Z);
+		Quaternion result;
+		Concatenate(a, b, result);
+		return result;
+	}
+
+	Quaternion Quaternion::GetIdentity()
+	{
+		return Quaternion(F64::C0, F64::C0, F64::C0, F64::C1);
+	}
+
+	Quaternion Quaternion::Normalize(Quaternion quaternion)
+	{
+		Quaternion toReturn;
+		Normalize(quaternion, toReturn);
+		return toReturn;
+	}
+
+	void Quaternion::Normalize(const Quaternion &quaternion, Quaternion &toReturn)
+	{
+		Fix64 inverse = F64::C1 / Fix64::Sqrt(quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W);
+		toReturn.X = quaternion.X * inverse;
+		toReturn.Y = quaternion.Y * inverse;
+		toReturn.Z = quaternion.Z * inverse;
+		toReturn.W = quaternion.W * inverse;
+	}
+
+	void Quaternion::Normalize()
+	{
+		Fix64 inverse = F64::C1 / Fix64::Sqrt(X * X + Y * Y + Z * Z + W * W);
 		X *= inverse;
 		Y *= inverse;
 		Z *= inverse;
+		W *= inverse;
 	}
 
-	string Vector3::ToString()
+	Fix64 Quaternion::LengthSquared()
 	{
-		return "{" + (string) X + ", " + (string) Y + ", " + (string) Z + "}";
+		return X * X + Y * Y + Z * Z + W * W;
 	}
 
-	Fix64 Vector3::Dot(Vector3 a, Vector3 b)
+	Fix64 Quaternion::Length()
 	{
-		return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+		return Fix64::Sqrt(X * X + Y * Y + Z * Z + W * W);
 	}
 
-	void Vector3::Dot(const Vector3 &a, const Vector3 &b, Fix64 &product)
+	void Quaternion::Slerp(Quaternion &start, Quaternion &end, Fix64 interpolationAmount, Quaternion &result)
 	{
-		product = a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+		Fix64 cosHalfTheta = start.W * end.W + start.X * end.X + start.Y * end.Y + start.Z * end.Z;
+		if (cosHalfTheta < F64::C0)
+		{
+			//Negating a quaternion results in the same orientation, 
+			//but we need cosHalfTheta to be positive to get the shortest path.
+			end.X = -end.X;
+			end.Y = -end.Y;
+			end.Z = -end.Z;
+			end.W = -end.W;
+			cosHalfTheta = -cosHalfTheta;
+		}
+		// If the orientations are similar enough, then just pick one of the inputs.
+		if (cosHalfTheta > F64::C1m1em12)
+		{
+			result.W = start.W;
+			result.X = start.X;
+			result.Y = start.Y;
+			result.Z = start.Z;
+			return;
+		}
+		// Calculate temporary values.
+		Fix64 halfTheta = Fix64::Acos(cosHalfTheta);
+		Fix64 sinHalfTheta = Fix64::Sqrt(F64::C1 - cosHalfTheta * cosHalfTheta);
+
+		Fix64 aFraction = Fix64::Sin((F64::C1 - interpolationAmount) * halfTheta) / sinHalfTheta;
+		Fix64 bFraction = Fix64::Sin(interpolationAmount * halfTheta) / sinHalfTheta;
+
+		//Blend the two quaternions to get the result!
+		result.X = (Fix64)(start.X * aFraction + end.X * bFraction);
+		result.Y = (Fix64)(start.Y * aFraction + end.Y * bFraction);
+		result.Z = (Fix64)(start.Z * aFraction + end.Z * bFraction);
+		result.W = (Fix64)(start.W * aFraction + end.W * bFraction);
 	}
 
-	void Vector3::Add(const Vector3 &a, const Vector3 &b, Vector3 &sum)
+	Quaternion Quaternion::Slerp(Quaternion start, Quaternion end, Fix64 interpolationAmount)
 	{
-		sum.X = a.X + b.X;
-		sum.Y = a.Y + b.Y;
-		sum.Z = a.Z + b.Z;
-	}
-
-	void Vector3::Subtract(const Vector3 &a, const Vector3 &b, Vector3 &difference)
-	{
-		difference.X = a.X - b.X;
-		difference.Y = a.Y - b.Y;
-		difference.Z = a.Z - b.Z;
-	}
-
-	void Vector3::Multiply(const Vector3 &v, Fix64 scale, Vector3 &result)
-	{
-		result.X = v.X * scale;
-		result.Y = v.Y * scale;
-		result.Z = v.Z * scale;
-	}
-
-	void Vector3::Multiply(const Vector3 &a, const Vector3 &b, Vector3 &result)
-	{
-		result.X = a.X * b.X;
-		result.Y = a.Y * b.Y;
-		result.Z = a.Z * b.Z;
-	}
-
-	void Vector3::Divide(const Vector3 &v, Fix64 divisor, Vector3 &result)
-	{
-		Fix64 inverse = F64::C1 / divisor;
-		result.X = v.X * inverse;
-		result.Y = v.Y * inverse;
-		result.Z = v.Z * inverse;
-	}
-
-	Vector3 Vector3::operator *(Fix64 f) const
-	{
-		Vector3 toReturn;
-		toReturn.X = this->X * f;
-		toReturn.Y = this->Y * f;
-		toReturn.Z = this->Z * f;
+		Quaternion toReturn;
+		Slerp(start, end, interpolationAmount, toReturn);
 		return toReturn;
 	}
 
-	Vector3 Vector3::operator *(Vector3 b) const
+	void Quaternion::Conjugate(const Quaternion &quaternion, Quaternion &result)
 	{
-		Vector3 result;
-		Multiply(*this, b, result);
+		result.X = -quaternion.X;
+		result.Y = -quaternion.Y;
+		result.Z = -quaternion.Z;
+		result.W = quaternion.W;
+	}
+
+	Quaternion Quaternion::Conjugate(Quaternion quaternion)
+	{
+		Quaternion toReturn;
+		Conjugate(quaternion, toReturn);
+		return toReturn;
+	}
+
+	void Quaternion::Inverse(const Quaternion &quaternion, Quaternion &result)
+	{
+		Fix64 inverseSquaredNorm = quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W;
+		result.X = -quaternion.X * inverseSquaredNorm;
+		result.Y = -quaternion.Y * inverseSquaredNorm;
+		result.Z = -quaternion.Z * inverseSquaredNorm;
+		result.W = quaternion.W * inverseSquaredNorm;
+	}
+
+	Quaternion Quaternion::Inverse(Quaternion quaternion)
+	{
+		Quaternion result;
+		Inverse(quaternion, result);
 		return result;
 	}
 
-	Vector3 Vector3::operator /(Fix64 f) const
+	bool Quaternion::operator ==(Quaternion b) const
 	{
-		Vector3 toReturn;
-		f = F64::C1 / f;
-		toReturn.X = this->X * f;
-		toReturn.Y = this->Y * f;
-		toReturn.Z = this->Z * f;
-		return toReturn;
+		return this->X == b.X && this->Y == b.Y && this->Z == b.Z && this->W == b.W;
 	}
 
-	Vector3 Vector3::operator -(Vector3 b) const
+	bool Quaternion::operator !=(Quaternion b) const
 	{
-		Vector3 v;
-		v.X = this->X - b.X;
-		v.Y = this->Y - b.Y;
-		v.Z = this->Z - b.Z;
-		return v;
+		return this->X != b.X || this->Y != b.Y || this->Z != b.Z || this->W != b.W;
 	}
 
-	Vector3 Vector3::operator +(Vector3 b) const
+	void Quaternion::Negate(const Quaternion &a, Quaternion &b)
 	{
-		Vector3 v;
-		v.X = this->X + b.X;
-		v.Y = this->Y + b.Y;
-		v.Z = this->Z + b.Z;
-		return v;
+		b.X = -a.X;
+		b.Y = -a.Y;
+		b.Z = -a.Z;
+		b.W = -a.W;
 	}
 
-	Vector3 Vector3::operator -()
+	Quaternion Quaternion::Negate(Quaternion q)
 	{
-		this->X = -this->X;
-		this->Y = -this->Y;
-		this->Z = -this->Z;
-		return *this;
-	}
-
-	bool Vector3::operator ==(Vector3 b)
-	{
-		return this->X == b.X && this->Y == this->Y && this->Z == b.Z;
-	}
-
-	bool Vector3::operator !=(Vector3 b)
-	{
-		return this->X != b.X || this->Y != b.Y || this->Z != b.Z;
-	}
-
-	bool Vector3::Equals(Vector3 other)
-	{
-		return X == other.X && Y == other.Y && Z == other.Z;
-	}
-
-	void Vector3::DistanceSquared(const Vector3 &a, const Vector3 &b, Fix64 &distanceSquared)
-	{
-		Fix64 x = a.X - b.X;
-		Fix64 y = a.Y - b.Y;
-		Fix64 z = a.Z - b.Z;
-		distanceSquared = x * x + y * y + z * z;
-	}
-
-	Fix64 Vector3::DistanceSquared(Vector3 a, Vector3 b)
-	{
-		Fix64 x = a.X - b.X;
-		Fix64 y = a.Y - b.Y;
-		Fix64 z = a.Z - b.Z;
-		return x * x + y * y + z * z;
-	}
-
-	void Vector3::Distance(const Vector3 &a, const Vector3 &b, Fix64 &distance)
-	{
-		Fix64 x = a.X - b.X;
-		Fix64 y = a.Y - b.Y;
-		Fix64 z = a.Z - b.Z;
-		distance = Fix64::Sqrt(x * x + y * y + z * z);
-	}
-
-	Fix64 Vector3::Distance(Vector3 a, Vector3 b)
-	{
-		Fix64 toReturn;
-		Distance(a, b, toReturn);
-		return toReturn;
-	}
-
-	Vector3 Vector3::GetZero()
-	{
-		return Vector3(F64::C0, F64::C0, F64::C0);
-	}
-
-	Vector3 Vector3::GetUp()
-	{
-		return Vector3(F64::C0, F64::C1, F64::C0);
-	}
-
-	Vector3 Vector3::GetDown()
-	{
-		return Vector3(F64::C0, -1, F64::C0);
-	}
-
-	Vector3 Vector3::GetRight()
-	{
-		return Vector3(F64::C1, F64::C0, F64::C0);
-	}
-
-	Vector3 Vector3::GetLeft()
-	{
-		return Vector3(-1, F64::C0, F64::C0);
-	}
-
-	Vector3 Vector3::GetForward()
-	{
-		return Vector3(F64::C0, F64::C0, -1);
-	}
-
-	Vector3 Vector3::GetBackward()
-	{
-		return Vector3(F64::C0, F64::C0, F64::C1);
-	}
-
-	Vector3 Vector3::GetUnitX()
-	{
-		return Vector3(F64::C1, F64::C0, F64::C0);
-	}
-
-	Vector3 Vector3::GetUnitY()
-	{
-		return Vector3(F64::C0, F64::C1, F64::C0);
-	}
-
-	Vector3 Vector3::GetUnitZ()
-	{
-		return Vector3(F64::C0, F64::C0, F64::C1);
-	}
-
-	Vector3 Vector3::Cross(Vector3 a, Vector3 b)
-	{
-		Vector3 toReturn;
-		Vector3::Cross(a, b, toReturn);
-		return toReturn;
-	}
-
-	void Vector3::Cross(const Vector3 &a, const Vector3 &b, Vector3 &result)
-	{
-		Fix64 resultX = a.Y * b.Z - a.Z * b.Y;
-		Fix64 resultY = a.Z * b.X - a.X * b.Z;
-		Fix64 resultZ = a.X * b.Y - a.Y * b.X;
-		result.X = resultX;
-		result.Y = resultY;
-		result.Z = resultZ;
-	}
-
-	Vector3 Vector3::Normalize(Vector3 v)
-	{
-		Vector3 toReturn;
-		Vector3::Normalize(v, toReturn);
-		return toReturn;
-	}
-
-	void Vector3::Normalize(const Vector3 &v, Vector3 &result)
-	{
-		Fix64 inverse = F64::C1 / Fix64::Sqrt(v.X * v.X + v.Y * v.Y + v.Z * v.Z);
-		result.X = v.X * inverse;
-		result.Y = v.Y * inverse;
-		result.Z = v.Z * inverse;
-	}
-
-	void Vector3::Negate(const Vector3 &v, Vector3 &negated)
-	{
-		negated.X = -v.X;
-		negated.Y = -v.Y;
-		negated.Z = -v.Z;
-	}
-
-	void Vector3::Abs(const Vector3 &v, Vector3 &result)
-	{
-		if (v.X < F64::C0)
-			result.X = -v.X;
-		else
-			result.X = v.X;
-		if (v.Y < F64::C0)
-			result.Y = -v.Y;
-		else
-			result.Y = v.Y;
-		if (v.Z < F64::C0)
-			result.Z = -v.Z;
-		else
-			result.Z = v.Z;
-	}
-
-	Vector3 Vector3::Abs(Vector3 v)
-	{
-		Vector3 result;
-		Abs(v, result);
+		Quaternion result;
+		Negate(q, result);
 		return result;
 	}
 
-	void Vector3::Min(const Vector3 &a, const Vector3 &b, Vector3 &min)
+	Quaternion Quaternion::operator -()
 	{
-		min.X = a.X < b.X ? a.X : b.X;
-		min.Y = a.Y < b.Y ? a.Y : b.Y;
-		min.Z = a.Z < b.Z ? a.Z : b.Z;
-	}
-
-	Vector3 Vector3::Min(Vector3 a, Vector3 b)
-	{
-		Vector3 result;
-		Min(a, b, result);
+		Quaternion result;
+		Negate(*this, result);
 		return result;
 	}
 
-	void Vector3::Max(const Vector3 &a, const Vector3 &b, Vector3 &max)
+	bool Quaternion::Equals(Quaternion other)
 	{
-		max.X = a.X > b.X ? a.X : b.X;
-		max.Y = a.Y > b.Y ? a.Y : b.Y;
-		max.Z = a.Z > b.Z ? a.Z : b.Z;
+		return X == other.X && Y == other.Y && Z == other.Z && W == other.W;
 	}
 
-	Vector3 Vector3::Max(Vector3 a, Vector3 b)
+	void Quaternion::Transform(const Vector3 &v, const Quaternion &rotation, Vector3 &result)
 	{
-		Vector3 result;
-		Max(a, b, result);
-		return result;
+		//This operation is an optimized-down version of v' = q * v * q^-1.
+		//The expanded form would be to treat v as an 'axis only' quaternion
+		//and perform standard quaternion multiplication.  Assuming q is normalized,
+		//q^-1 can be replaced by a conjugation.
+		Fix64 x2 = rotation.X + rotation.X;
+		Fix64 y2 = rotation.Y + rotation.Y;
+		Fix64 z2 = rotation.Z + rotation.Z;
+		Fix64 xx2 = rotation.X * x2;
+		Fix64 xy2 = rotation.X * y2;
+		Fix64 xz2 = rotation.X * z2;
+		Fix64 yy2 = rotation.Y * y2;
+		Fix64 yz2 = rotation.Y * z2;
+		Fix64 zz2 = rotation.Z * z2;
+		Fix64 wx2 = rotation.W * x2;
+		Fix64 wy2 = rotation.W * y2;
+		Fix64 wz2 = rotation.W * z2;
+		//Defer the component setting since they're used in computation.
+		Fix64 transformedX = v.X * (F64::C1 - yy2 - zz2) + v.Y * (xy2 - wz2) + v.Z * (xz2 + wy2);
+		Fix64 transformedY = v.X * (xy2 + wz2) + v.Y * (F64::C1 - xx2 - zz2) + v.Z * (yz2 - wx2);
+		Fix64 transformedZ = v.X * (xz2 - wy2) + v.Y * (yz2 + wx2) + v.Z * (F64::C1 - xx2 - yy2);
+		result.X = transformedX;
+		result.Y = transformedY;
+		result.Z = transformedZ;
 	}
 
-	Vector3 Vector3::Lerp(Vector3 start, Vector3 end, Fix64 interpolationAmount)
+	Vector3 Quaternion::Transform(Vector3 v, Quaternion rotation)
 	{
 		Vector3 toReturn;
-		Lerp(start, end, interpolationAmount, toReturn);
+		Transform(v, rotation, toReturn);
 		return toReturn;
 	}
 
-	void Vector3::Lerp(const Vector3 &start, const Vector3 &end, Fix64 interpolationAmount, Vector3 &result)
+	void Quaternion::TransformX(Fix64 x, const Quaternion &rotation, Vector3 result)
 	{
-		Fix64 startAmount = F64::C1 - interpolationAmount;
-		result.X = start.X * startAmount + end.X * interpolationAmount;
-		result.Y = start.Y * startAmount + end.Y * interpolationAmount;
-		result.Z = start.Z * startAmount + end.Z * interpolationAmount;
+		//This operation is an optimized-down version of v' = q * v * q^-1.
+		//The expanded form would be to treat v as an 'axis only' quaternion
+		//and perform standard quaternion multiplication.  Assuming q is normalized,
+		//q^-1 can be replaced by a conjugation.
+		Fix64 y2 = rotation.Y + rotation.Y;
+		Fix64 z2 = rotation.Z + rotation.Z;
+		Fix64 xy2 = rotation.X * y2;
+		Fix64 xz2 = rotation.X * z2;
+		Fix64 yy2 = rotation.Y * y2;
+		Fix64 zz2 = rotation.Z * z2;
+		Fix64 wy2 = rotation.W * y2;
+		Fix64 wz2 = rotation.W * z2;
+		//Defer the component setting since they're used in computation.
+		Fix64 transformedX = x * (F64::C1 - yy2 - zz2);
+		Fix64 transformedY = x * (xy2 + wz2);
+		Fix64 transformedZ = x * (xz2 - wy2);
+		result.X = transformedX;
+		result.Y = transformedY;
+		result.Z = transformedZ;
 	}
 
-	void Vector3::Hermite(const Vector3 &value1, const Vector3 &tangent1, const Vector3 &value2, const Vector3 &tangent2, Fix64 interpolationAmount, Vector3 &result)
+	void Quaternion::TransformY(Fix64 y, const Quaternion &rotation, Vector3 &result)
 	{
-		//TO-DO
-		/*Fix64 weightSquared = interpolationAmount * interpolationAmount;
-		Fix64 weightCubed = interpolationAmount * weightSquared;
-		Fix64 value1Blend = F64::C2 * weightCubed - F64::C3 * weightSquared + F64::C1;
-		Fix64 tangent1Blend = weightCubed - F64::C2 * weightSquared + interpolationAmount;
-		Fix64 value2Blend = -2 * weightCubed + F64::C3 * weightSquared;
-		Fix64 tangent2Blend = weightCubed - weightSquared;
-		result.X = value1.X * value1Blend + value2.X * value2Blend + tangent1.X * tangent1Blend + tangent2.X * tangent2Blend;
-		result.Y = value1.Y * value1Blend + value2.Y * value2Blend + tangent1.Y * tangent1Blend + tangent2.Y * tangent2Blend;
-		result.Z = value1.Z * value1Blend + value2.Z * value2Blend + tangent1.Z * tangent1Blend + tangent2.Z * tangent2Blend;*/
+		//This operation is an optimized-down version of v' = q * v * q^-1.
+		//The expanded form would be to treat v as an 'axis only' quaternion
+		//and perform standard quaternion multiplication.  Assuming q is normalized,
+		//q^-1 can be replaced by a conjugation.
+		Fix64 x2 = rotation.X + rotation.X;
+		Fix64 y2 = rotation.Y + rotation.Y;
+		Fix64 z2 = rotation.Z + rotation.Z;
+		Fix64 xx2 = rotation.X * x2;
+		Fix64 xy2 = rotation.X * y2;
+		Fix64 yz2 = rotation.Y * z2;
+		Fix64 zz2 = rotation.Z * z2;
+		Fix64 wx2 = rotation.W * x2;
+		Fix64 wz2 = rotation.W * z2;
+		//Defer the component setting since they're used in computation.
+		Fix64 transformedX = y * (xy2 - wz2);
+		Fix64 transformedY = y * (F64::C1 - xx2 - zz2);
+		Fix64 transformedZ = y * (yz2 + wx2);
+		result.X = transformedX;
+		result.Y = transformedY;
+		result.Z = transformedZ;
 	}
 
-	Vector3 Vector3::Hermite(Vector3 value1, Vector3 tangent1, Vector3 value2, Vector3 tangent2, Fix64 interpolationAmount)
+	void Quaternion::TransformZ(Fix64 z, const Quaternion &rotation, Vector3 &result)
 	{
-		Vector3 toReturn;
-		Hermite(value1, tangent1, value2, tangent2, interpolationAmount, toReturn);
+		//This operation is an optimized-down version of v' = q * v * q^-1.
+		//The expanded form would be to treat v as an 'axis only' quaternion
+		//and perform standard quaternion multiplication.  Assuming q is normalized,
+		//q^-1 can be replaced by a conjugation.
+		Fix64 x2 = rotation.X + rotation.X;
+		Fix64 y2 = rotation.Y + rotation.Y;
+		Fix64 z2 = rotation.Z + rotation.Z;
+		Fix64 xx2 = rotation.X * x2;
+		Fix64 xz2 = rotation.X * z2;
+		Fix64 yy2 = rotation.Y * y2;
+		Fix64 yz2 = rotation.Y * z2;
+		Fix64 wx2 = rotation.W * x2;
+		Fix64 wy2 = rotation.W * y2;
+		//Defer the component setting since they're used in computation.
+		Fix64 transformedX = z * (xz2 + wy2);
+		Fix64 transformedY = z * (yz2 - wx2);
+		Fix64 transformedZ = z * (F64::C1 - xx2 - yy2);
+		result.X = transformedX;
+		result.Y = transformedY;
+		result.Z = transformedZ;
+	}
+
+	Quaternion Quaternion::operator *(Quaternion b) const
+	{
+		Quaternion toReturn;
+		Multiply(*this, b, toReturn);
 		return toReturn;
+	}
+
+	Quaternion Quaternion::CreateFromAxisAngle(Vector3 axis, Fix64 angle)
+	{
+		Fix64 halfAngle = angle * F64::C0p5;
+		Fix64 s = Fix64::Sin(halfAngle);
+		Quaternion q;
+		q.X = axis.X * s;
+		q.Y = axis.Y * s;
+		q.Z = axis.Z * s;
+		q.W = Fix64::Cos(halfAngle);
+		return q;
+	}
+
+	void Quaternion::CreateFromAxisAngle(const Vector3 &axis, Fix64 angle, Quaternion &q)
+	{
+		Fix64 halfAngle = angle * F64::C0p5;
+		Fix64 s = Fix64::Sin(halfAngle);
+		q.X = axis.X * s;
+		q.Y = axis.Y * s;
+		q.Z = axis.Z * s;
+		q.W = Fix64::Cos(halfAngle);
+	}
+
+	Quaternion Quaternion::CreateFromYawPitchRoll(Fix64 yaw, Fix64 pitch, Fix64 roll)
+	{
+		Quaternion toReturn;
+		CreateFromYawPitchRoll(yaw, pitch, roll, toReturn);
+		return toReturn;
+	}
+
+	void Quaternion::CreateFromYawPitchRoll(Fix64 yaw, Fix64 pitch, Fix64 roll, Quaternion &q)
+	{
+		Fix64 halfRoll = roll * F64::C0p5;
+		Fix64 halfPitch = pitch * F64::C0p5;
+		Fix64 halfYaw = yaw * F64::C0p5;
+
+		Fix64 sinRoll = Fix64::Sin(halfRoll);
+		Fix64 sinPitch = Fix64::Sin(halfPitch);
+		Fix64 sinYaw = Fix64::Sin(halfYaw);
+
+		Fix64 cosRoll = Fix64::Cos(halfRoll);
+		Fix64 cosPitch = Fix64::Cos(halfPitch);
+		Fix64 cosYaw = Fix64::Cos(halfYaw);
+
+		Fix64 cosYawCosPitch = cosYaw * cosPitch;
+		Fix64 cosYawSinPitch = cosYaw * sinPitch;
+		Fix64 sinYawCosPitch = sinYaw * cosPitch;
+		Fix64 sinYawSinPitch = sinYaw * sinPitch;
+
+		q.X = cosYawSinPitch * cosRoll + sinYawCosPitch * sinRoll;
+		q.Y = sinYawCosPitch * cosRoll - cosYawSinPitch * sinRoll;
+		q.Z = cosYawCosPitch * sinRoll - sinYawSinPitch * cosRoll;
+		q.W = cosYawCosPitch * cosRoll + sinYawSinPitch * sinRoll;
+	}
+
+	Fix64 Quaternion::GetAngleFromQuaternion(const Quaternion &q)
+	{
+		Fix64 qw = Fix64::Abs(q.W);
+		if (qw > F64::C1)
+			return F64::C0;
+		return F64::C2 * Fix64::Acos(qw);
+	}
+
+	void Quaternion::GetRelativeRotation(const Quaternion &start, const Quaternion &end, Quaternion &relative)
+	{
+		Quaternion startInverse;
+		Conjugate(start, startInverse);
+		Concatenate(startInverse, end, relative);
+	}
+
+	void Quaternion::GetLocalRotation(const Quaternion &rotation, const Quaternion &targetBasis, Quaternion &localRotation)
+	{
+		Quaternion basisInverse;
+		Conjugate(targetBasis, basisInverse);
+		Concatenate(rotation, basisInverse, localRotation);
+	}
+
+	string Quaternion::ToString()
+	{
+		return "{ X: " + (string) X + ", Y: " + (string) Y + ", Z: " + (string) Z + ", W: " + (string) W + "}";
 	}
 }

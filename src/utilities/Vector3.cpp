@@ -14,6 +14,13 @@ namespace BepuUtilities
 		this->Z = F64::C0;
 	}
 
+	Vector3(Fix64 v)
+	{
+		this->Y = v;
+		this->X = v;
+		this->Z = v;
+	}
+
 	Vector3::Vector3(Fix64 x, Fix64 y, Fix64 z)
 	{
 		this->X = x;
@@ -35,12 +42,12 @@ namespace BepuUtilities
 		this->Z = yz.Y;
 	}
 
-	Fix64 Vector3::LengthSquared()
+	Fix64 Vector3::LengthSquared() const
 	{
 		return X * X + Y * Y + Z * Z;
 	}
 
-	Fix64 Vector3::Length()
+	Fix64 Vector3::Length() const
 	{
 		return Fix64::Sqrt(X * X + Y * Y + Z * Z);
 	}
@@ -53,7 +60,7 @@ namespace BepuUtilities
 		Z *= inverse;
 	}
 
-	string Vector3::ToString()
+	string Vector3::ToString() const
 	{
 		return "{" + (string) X + ", " + (string) Y + ", " + (string) Z + "}";
 	}

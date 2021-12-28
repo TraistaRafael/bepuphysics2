@@ -33,6 +33,12 @@ namespace BepuUtilities
 		/// <summary>
 		/// Constructs a new 3d vector.
 		/// </summary>
+		/// <param name="v">X, Y and X component of the vector.</param>
+		Vector3(Fix64 v);
+
+		/// <summary>
+		/// Constructs a new 3d vector.
+		/// </summary>
 		/// <param name="x">X component of the vector.</param>
 		/// <param name="y">Y component of the vector.</param>
 		/// <param name="z">Z component of the vector.</param>
@@ -56,13 +62,13 @@ namespace BepuUtilities
 		/// Computes the squared length of the vector.
 		/// </summary>
 		/// <returns>Squared length of the vector.</returns>
-		Fix64 LengthSquared();
+		Fix64 LengthSquared() const;
 
 		/// <summary>
 		/// Computes the length of the vector.
 		/// </summary>
 		/// <returns>Length of the vector.</returns>
-		Fix64 Length();
+		Fix64 Length() const;
 
 		/// <summary>
 		/// Normalizes the vector.
@@ -73,7 +79,7 @@ namespace BepuUtilities
 		/// Gets a string representation of the vector.
 		/// </summary>
 		/// <returns>String representing the vector.</returns>
-		string ToString();
+		string ToString() const;
 
 		/// <summary>
 		/// Computes the dot product of two vectors.

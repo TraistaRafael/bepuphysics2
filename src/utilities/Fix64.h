@@ -58,6 +58,19 @@ public:
 	Fix64 &operator>>=(int amount);
 
 	static Fix64 &Sqrt(const Fix64 &rhs);
+	static Fix64 &Abs(const Fix64 &rhs);
+
+	static Fix64 &Sin(const Fix64 &rhs);
+	static Fix64 &Cos(const Fix64 &rhs);
+	static Fix64 &Tan(const Fix64 &rhs);
+	static Fix64 &Ctan(const Fix64 &rhs);
+	static Fix64 &Acos(const Fix64 &rhs);
+	static Fix64 &Asin(const Fix64 &rhs);
+	static Fix64 &Atan(const Fix64 &rhs);
+	static Fix64 &Actan(const Fix64 &rhs);
+
+	static Fix64 One;
+	static Fix64 Zero;
 };
 
 #endif FIX64_HEADER

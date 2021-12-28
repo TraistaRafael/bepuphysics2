@@ -1,5 +1,8 @@
 #include "Fix64.h"
 
+Fix64 Fix64::One = Fix64(1);
+Fix64 Fix64::Zero = Fix64(0);
+
 Fix64::Fix64()
 {
 	raw = R128();
@@ -197,4 +200,59 @@ Fix64 &Fix64::Sqrt(const Fix64 &rhs)
 	Fix64 dest;
 	r128Sqrt(&dest.raw, &rhs.raw);
 	return dest;
+}
+
+Fix64 &Fix64::Abs(const Fix64 &rhs)
+{
+	Fix64 dest;
+	r128Abs(&dest.raw, &rhs.raw);
+	return dest;
+}
+
+Fix64 &Fix64::Sin(const Fix64 &rhs)
+{
+	//TO-DO implement this.
+	return Fix64(rhs);
+}
+
+Fix64 &Fix64::Cos(const Fix64 &rhs)
+{
+	//TO-DO implement this.
+	return Fix64(rhs);
+}
+
+Fix64 &Fix64::Tan(const Fix64 &rhs)
+{
+	//TO-DO implement this.
+	return Fix64(rhs);
+}
+
+Fix64 &Fix64::Ctan(const Fix64 &rhs)
+{
+	//TO-DO implement this.
+	return Fix64(rhs);
+}
+
+Fix64 &Fix64::Acos(const Fix64 &rhs)
+{
+	//TO-DO implement this.
+	return Fix64(rhs);
+}
+
+static Fix64 &Asin(const Fix64 &rhs)
+{
+	//TO-DO implement this.
+	return Fix64(rhs);
+}
+
+static Fix64 &Atan(const Fix64 &rhs)
+{
+	//TO-DO implement this.
+	return Fix64(rhs);
+}
+
+static Fix64 &Actan(const Fix64 &rhs)
+{
+	//TO-DO implement this.
+	return Fix64(rhs);
 }

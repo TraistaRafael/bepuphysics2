@@ -11,6 +11,14 @@ namespace BepuUtilities
 		this->W = F64::C0;
 	}
 
+	Vector4::Vector4(Fix64 v)
+	{
+		this->X = v;
+		this->Y = v;
+		this->Z = v;
+		this->W = v;
+	}
+
 	Vector4::Vector4(Fix64 x, Fix64 y, Fix64 z, Fix64 w)
 	{
 		this->X = x;
@@ -142,84 +150,74 @@ namespace BepuUtilities
 		result.W = v.W * inverse;
 	}
 	
-	Vector4 Vector4::operator *(Vector4 v, Fix64 f)
+	Vector4 Vector4::operator *(Fix64 f) const
 	{
 		Vector4 toReturn;
-		toReturn.X = v.X * f;
-		toReturn.Y = v.Y * f;
-		toReturn.Z = v.Z * f;
-		toReturn.W = v.W * f;
-		return toReturn;
-	}
-	
-	Vector4 Vector4::operator *(Fix64 f, Vector4 v)
-	{
-		Vector4 toReturn;
-		toReturn.X = v.X * f;
-		toReturn.Y = v.Y * f;
-		toReturn.Z = v.Z * f;
-		toReturn.W = v.W * f;
+		toReturn.X = this->X * f;
+		toReturn.Y = this->Y * f;
+		toReturn.Z = this->Z * f;
+		toReturn.W = this->W * f;
 		return toReturn;
 	}
 
-	Vector4 Vector4::operator *(Vector4 a, Vector4 b)
+	Vector4 Vector4::operator *(const Vector4 &b) const
 	{
 		Vector4 result;
-		Multiply(a, b, result);
+		Multiply(*this, b, result);
 		return result;
 	}
 
-	Vector4 Vector4::operator /(Vector4 v, Fix64 f)
+	Vector4 Vector4::operator /(Fix64 f) const
 	{
 		Vector4 toReturn;
 		f = F64::C1 / f;
-		toReturn.X = v.X * f;
-		toReturn.Y = v.Y * f;
-		toReturn.Z = v.Z * f;
-		toReturn.W = v.W * f;
+		toReturn.X = this->X * f;
+		toReturn.Y = this->Y * f;
+		toReturn.Z = this->Z * f;
+		toReturn.W = this->W * f;
 		return toReturn;
 	}
 
-	Vector4 Vector4::operator -(Vector4 a, Vector4 b)
+	Vector4 Vector4::operator -(const Vector4 &b) const
 	{
 		Vector4 v;
-		v.X = a.X - b.X;
-		v.Y = a.Y - b.Y;
-		v.Z = a.Z - b.Z;
-		v.W = a.W - b.W;
+		v.X = this->X - b.X;
+		v.Y = this->Y - b.Y;
+		v.Z = this->Z - b.Z;
+		v.W = this->W - b.W;
 		return v;
 	}
 
-	Vector4 Vector4::operator +(Vector4 a, Vector4 b)
+	Vector4 Vector4::operator +(const Vector4 &b) const
 	{
 		Vector4 v;
-		v.X = a.X + b.X;
-		v.Y = a.Y + b.Y;
-		v.Z = a.Z + b.Z;
-		v.W = a.W + b.W;
+		v.X = this->X + b.X;
+		v.Y = this->Y + b.Y;
+		v.Z = this->Z + b.Z;
+		v.W = this->W + b.W;
 		return v;
 	}
 
-	Vector4 Vector4::operator -(Vector4 v)
+	Vector4 Vector4::operator -()
 	{
-		v.X = -v.X;
-		v.Y = -v.Y;
-		v.Z = -v.Z;
-		v.W = -v.W;
-		return v;
+		this->X = -this->X;
+		this->Y = -this->Y;
+		this->Z = -this->Z;
+		this->W = -this->W;
+		return *this;
 	}
 
-	bool Vector4::operator ==(Vector4 a, Vector4 b)
+	bool Vector4::operator ==(const Vector4 &b) const
 	{
-		return a.X == b.X && a.Y == b.Y && a.Z == b.Z && a.W == b.W;
+		return this->X == b.X && this->Y == b.Y && this->Z == b.Z && this->W == b.W;
 	}
 
-	bool Vector4::operator !=(Vector4 a, Vector4 b)
+	bool Vector4::operator !=(const Vector4 &b) const
 	{
-		return a.X != b.X || a.Y != b.Y || a.Z != b.Z || a.W != b.W;
+		return this->X != b.X || this->Y != b.Y || this->Z != b.Z || this->W != b.W;
 	}
 
-	bool Vector4::Equals(Vector4 other)
+	bool Vector4::Equals(const Vector4 &other)
 	{
 		return X == other.X && Y == other.Y && Z == other.Z && W == other.W;
 	}
