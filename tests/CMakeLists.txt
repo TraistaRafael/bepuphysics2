@@ -11,6 +11,7 @@ add_executable(
     Fix64Tests.cpp
     Vector2Tests.cpp
     Vector3Tests.cpp
+    BoundingBoxTests.cpp
 )
 
 target_link_libraries(

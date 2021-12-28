@@ -90,6 +90,16 @@ bool Fix64::operator>(const Fix64 &rhs) const
 	return raw > rhs.raw;
 }
 
+bool Fix64::operator<=(const Fix64 &rhs) const
+{
+	return raw <= rhs.raw;
+}
+
+bool Fix64::operator>=(const Fix64 &rhs) const
+{
+	return raw >= rhs.raw;
+}
+
 bool Fix64::operator==(const Fix64 &rhs) const
 {
 	return raw == rhs.raw;

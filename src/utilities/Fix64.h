@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef FIX64_HEADER
+#define FIX64_HEADER
 
 #include <string>
 #include <memory>
@@ -37,6 +38,8 @@ public:
 
 	bool operator<(const Fix64 &rhs) const;
 	bool operator>(const Fix64 &rhs) const;
+	bool operator<=(const Fix64 &rhs) const;
+	bool operator>=(const Fix64 &rhs) const;
 	bool operator==(const Fix64 &rhs) const;
 	bool operator!=(const Fix64 &rhs) const;
 
@@ -56,3 +59,5 @@ public:
 
 	static Fix64 &Sqrt(const Fix64 &rhs);
 };
+
+#endif FIX64_HEADER

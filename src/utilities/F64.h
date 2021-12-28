@@ -1,8 +1,9 @@
-﻿#pragma once
+﻿#ifndef F64_HEADER
+#define F64_HEADER
 
-#include "common.h"
+#include "Fix64.h"
 
-namespace BEPUutilities
+namespace BepuUtilities
 {
 	static class F64
 	{
@@ -56,3 +57,5 @@ namespace BEPUutilities
 		static const Fix64 C600000;
 	};
 }
+
+#endif // F64_HEADER
