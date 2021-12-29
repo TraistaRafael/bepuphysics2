@@ -1,10 +1,11 @@
-﻿#ifndef VECTOR3_HEADER
-#define VECTOR3_HEADER
+﻿#pragma once
+//#ifndef VECTOR3_HEADER
+//#define VECTOR3_HEADER
 
-#include "../Common.h"
 #include "../ForwardDeclarations.h"
+#include "Fix64.h"
 
-namespace BepuUtilities
+namespace Utilities 
 {
 	/// <summary>
 	/// Provides XNA-like 3D vector math.
@@ -428,7 +429,7 @@ namespace BepuUtilities
 		/// <param name="interpolationAmount">Amount of the second point to use.</param>
 		/// <returns>Interpolated intermediate state.</returns>
 		static Vector3 Hermite(Vector3 value1, Vector3 tangent1, Vector3 value2, Vector3 tangent2, Fix64 interpolationAmount);
+
 	};
 }
-
-#endif //VECTOR3_HEADER
+//#endif //VECTOR3_HEADER

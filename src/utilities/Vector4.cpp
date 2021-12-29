@@ -1,6 +1,9 @@
 ﻿#include "Vector4.h"
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Quaternion.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
 
 	Vector4::Vector4()
@@ -389,5 +392,4 @@ namespace BepuUtilities
 		Hermite(value1, tangent1, value2, tangent2, interpolationAmount, toReturn);
 		return toReturn;
 	}
-
 }

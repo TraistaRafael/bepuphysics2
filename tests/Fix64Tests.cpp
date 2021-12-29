@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 #include "../src/utilities/Fix64.h"
 
+using namespace Utilities;
+
 TEST(Fix64, Add) 
 {
 	Fix64 a(10.2);

@@ -1,10 +1,8 @@
-﻿#pragma once
-
-#include "BoundingBox.h"
+﻿#include "BoundingBox.h"
 #include "BoundingSphere.h"
 #include "ContainmentType.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
 	BoundingBox::BoundingBox()
 	{

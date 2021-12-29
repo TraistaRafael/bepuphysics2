@@ -1,12 +1,15 @@
-﻿#ifndef VECTOR4_HEADER
-#define VECTOR4_HEADER
+﻿#pragma once
+//#ifndef VECTOR4_HEADER
+//#define VECTOR4_HEADER
 
 #include "../Common.h"
-#include "Vector3.h"
-#include "Vector2.h"
-#include "Quaternion.h"
+#include "../ForwardDeclarations.h"
+#include "Fix64.h"
+//#include "Vector3.h"
+//#include "Vector2.h"
+//#include "Quaternion.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
 	/// <summary>
 	/// Provides XNA-like 4-component vector math.
@@ -405,4 +408,4 @@ namespace BepuUtilities
 		static Vector4 Hermite(const Vector4 &value1, const Vector4 &tangent1, const Vector4 &value2, const Vector4 &tangent2, Fix64 interpolationAmount);
 	};
 }
-#endif //VECTOR4_HEADER
+//#endif //VECTOR4_HEADER

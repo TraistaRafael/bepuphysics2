@@ -1,10 +1,7 @@
-﻿#pragma once
+﻿#include "Vector2.h"
 
-#include "Vector2.h"
-
-namespace BepuUtilities
+namespace Utilities
 {
-  
 	Vector2::Vector2()
 	{
 		this->X = 0;
@@ -164,7 +161,7 @@ namespace BepuUtilities
         Y *= inverse;
     }
 
-    Vector2 &Vector2::operator *(const Fix64 &f)
+    Vector2 Vector2::operator *(const Fix64 &f)
     {
 		Vector2 toReturn(*this);
         toReturn.X *= f;
@@ -172,14 +169,14 @@ namespace BepuUtilities
         return toReturn;
     }
    
-    Vector2 &Vector2::operator *(const Vector2 &b)
+    Vector2 Vector2::operator *(const Vector2 &b)
     {
 		Vector2 toReturn;
 		Vector2::Multiply(*this, b, toReturn);
         return toReturn;
     }
 
-    Vector2 &Vector2::operator /(Fix64 f)
+    Vector2 Vector2::operator /(Fix64 f)
     {
         Vector2 toReturn;
         f = F64::C1 / f;
@@ -188,7 +185,7 @@ namespace BepuUtilities
         return toReturn;
     }
 
-    Vector2 &Vector2::operator -(const Vector2 &a)
+    Vector2 Vector2::operator -(const Vector2 &a)
     {
         Vector2 toReturn(*this);
         toReturn.X -= a.X;
@@ -196,7 +193,7 @@ namespace BepuUtilities
         return toReturn;
     }
 
-    Vector2 &Vector2::operator +(const Vector2 &a)
+    Vector2 Vector2::operator +(const Vector2 &a)
     {
 		Vector2 toReturn(*this);
 		toReturn.X += a.X;
@@ -204,7 +201,7 @@ namespace BepuUtilities
 		return toReturn;
     }
 
-    Vector2 &Vector2::operator -()
+    Vector2 Vector2::operator -()
     {
 		Vector2 toReturn(*this);
 		toReturn.X = -toReturn.X;

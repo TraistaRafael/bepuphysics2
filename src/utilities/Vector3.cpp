@@ -1,12 +1,9 @@
-﻿#pragma once
-
-#include "Vector3.h"
+﻿#include "Vector3.h"
 #include "Vector2.h"
-#include "Fix64.h"
-#include "F64.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
+
 	Vector3::Vector3()
 	{
 		this->X = F64::C0;
@@ -14,7 +11,7 @@ namespace BepuUtilities
 		this->Z = F64::C0;
 	}
 
-	Vector3(Fix64 v)
+	Vector3::Vector3(Fix64 v)
 	{
 		this->Y = v;
 		this->X = v;

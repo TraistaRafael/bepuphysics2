@@ -1,6 +1,6 @@
 ﻿#include "BoundingSphere.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
 	BoundingSphere::BoundingSphere(Vector3 center, Fix64 radius)
 	{

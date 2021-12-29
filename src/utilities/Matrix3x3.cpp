@@ -1,11 +1,9 @@
-﻿#pragma once
-
-#include "Matrix3x3.h"
+﻿#include "Matrix3x3.h"
 #include "Matrix.h"
+#include "Quaternion.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
-  
 	Matrix3x3 Matrix3x3::GetIdentity()
 	{
 		Matrix3x3 toReturn;

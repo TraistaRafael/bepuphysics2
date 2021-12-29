@@ -1,10 +1,12 @@
-﻿#ifndef QUATERNION_HEADER
-#define QUATERNION_HEADER
+﻿#pragma once
+//#ifndef QUATERNION_HEADER
+//#define QUATERNION_HEADER
 
 #include "../Common.h"
 #include "../ForwardDeclarations.h"
+#include "Fix64.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
 	/// <summary>
    /// Provides XNA-like quaternion support.
@@ -329,4 +331,4 @@ namespace BepuUtilities
 	};
 }
 
-#endif //QUATERNION_HEADER
+//#endif //QUATERNION_HEADER

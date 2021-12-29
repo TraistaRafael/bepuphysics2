@@ -2,8 +2,9 @@
 
 #include "../Common.h"
 #include "Vector3.h"
+#include "Fix64.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
 	/// <summary>
 	/// Provides XNA-like bounding sphere functionality.

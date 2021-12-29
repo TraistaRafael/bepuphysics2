@@ -1,7 +1,7 @@
  #include "gtest/gtest.h"
  #include "../src/utilities/Vector2.h"
 
-using namespace BepuUtilities;
+using namespace Utilities;
 
  TEST(Vector2, Add) 
  {

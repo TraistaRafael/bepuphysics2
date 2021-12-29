@@ -1,11 +1,12 @@
-﻿#ifndef MATRIX3X3_HEADER
-#define MATRIX3X3_HEADER
+﻿#pragma once
+//#ifndef MATRIX3X3_HEADER
+//#define MATRIX3X3_HEADER
 
 #include "../Common.h"
 #include "../ForwardDeclarations.h"
 #include "Vector3.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
 	/// <summary>
 	/// 3 row, 3 column matrix.
@@ -162,5 +163,5 @@ namespace BepuUtilities
 		Matrix3x3 operator *(const Matrix3x3 &m2);
 	};
 }
-
-#endif //MATRIX3X3_HEADER
+//
+//#endif //MATRIX3X3_HEADER

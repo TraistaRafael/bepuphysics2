@@ -1,11 +1,10 @@
-﻿#ifndef BOUNDINGBOX_HEADER
-#define BOUNDINGBOX_HEADER
+﻿#pragma once
 
 #include "../Common.h"
 #include "../ForwardDeclarations.h"
 #include "Vector3.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
 	/// <summary>
 	/// Provides XNA-like axis-aligned bounding box functionality.
@@ -122,5 +121,3 @@ namespace BepuUtilities
 
 	};
 }
-
-#endif

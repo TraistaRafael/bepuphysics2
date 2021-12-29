@@ -1,9 +1,11 @@
-﻿#ifndef FORWARD_HEADER
-#define FORWARD_HEADER
+﻿//#ifndef FORWARD_HEADER
+//#define FORWARD_HEADER
 
-namespace BepuUtilities
+namespace Utilities
 {
 	enum ContainmentType;
+
+	//class Fix64;
 
 	class Vector2;
 	class Vector3;
@@ -17,4 +19,4 @@ namespace BepuUtilities
 	class Matrix3x3;
 }
 
-#endif // FORWARD_HEADER
+//#endif // FORWARD_HEADER

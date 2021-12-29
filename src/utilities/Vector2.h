@@ -1,9 +1,12 @@
-﻿#ifndef VECTOR2_HEADER
-#define VECTOR2_HEADER
+﻿#pragma once
+
+//#ifndef VECTOR2_HEADER
+//#define VECTOR2_HEADER
 
 #include "../Common.h"
+#include "Fix64.h"
 
-namespace BepuUtilities
+namespace Utilities
 {
     /// <summary>
     /// Provides XNA-like 2D vector math.
@@ -199,7 +202,7 @@ namespace BepuUtilities
         /// <param name="v">Vector to scale.</param>
         /// <param name="f">Amount to scale.</param>
         /// <returns>Scaled vector.</returns>
-		Vector2 &operator *(const Fix64 &f);
+		Vector2 operator *(const Fix64 &f);
        
         /// <summary>
         /// Multiplies two vectors on a per-component basis.
@@ -207,7 +210,7 @@ namespace BepuUtilities
         /// <param name="a">First vector to multiply.</param>
         /// <param name="b">Second vector to multiply.</param>
         /// <returns>Result of the componentwise multiplication.</returns>
-		Vector2 &operator *(const Vector2 &b);
+		Vector2 operator *(const Vector2 &b);
 
         /// <summary>
         /// Divides a vector.
@@ -215,7 +218,7 @@ namespace BepuUtilities
         /// <param name="v">Vector to divide.</param>
         /// <param name="f">Amount to divide.</param>
         /// <returns>Divided vector.</returns>
-		Vector2& operator /(Fix64 f);
+		Vector2 operator /(Fix64 f);
 
         /// <summary>
         /// Subtracts two vectors.
@@ -223,7 +226,7 @@ namespace BepuUtilities
         /// <param name="a">Vector to be subtracted from.</param>
         /// <param name="b">Vector to subtract from the first vector.</param>
         /// <returns>Resulting difference.</returns>
-		Vector2 &operator -(const Vector2 &a);
+		Vector2 operator -(const Vector2 &a);
 
         /// <summary>
         /// Adds two vectors.
@@ -231,14 +234,14 @@ namespace BepuUtilities
         /// <param name="a">First vector to add.</param>
         /// <param name="b">Second vector to add.</param>
         /// <returns>Sum of the addition.</returns>
-		Vector2 &operator +(const Vector2 &a);
+		Vector2 operator +(const Vector2 &a);
 
         /// <summary>
         /// Negates the vector.
         /// </summary>
         /// <param name="v">Vector to negate.</param>
         /// <returns>Negated vector.</returns>
-		Vector2 &operator -();
+		Vector2 operator -();
 
         /// <summary>
         /// Tests two vectors for componentwise equivalence.
@@ -268,4 +271,4 @@ namespace BepuUtilities
 	};
 }
 
-#endif //VECTOR2_HEADER
+//#endif //VECTOR2_HEADER
